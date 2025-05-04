@@ -6,7 +6,6 @@ description: 'CJK Test'
 image: ''
 tags: [C#, テスト, 技术, Fuwari]
 category: '技术'
-draft: true 
 ---
 
 CJK Test
