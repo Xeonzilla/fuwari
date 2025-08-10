@@ -139,3 +139,11 @@
 .collapsed {
     height: var(--collapsedHeight);
 }
+
+.category-toggle.rotate-90 {
+    transform: rotate(90deg);
+}
+
+.category-node .category-children {
+    transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

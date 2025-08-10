@@ -53,9 +53,18 @@ onMount(async () => {
 	}
 
 	if (categories.length > 0) {
-		filteredPosts = filteredPosts.filter(
-			(post) => post.data.category && categories.includes(post.data.category),
-		);
+		filteredPosts = filteredPosts.filter((post) => {
+			if (!post.data.category) return false;
+			const normalizedPostCategory = post.data.category.replace(
+				/\s*\/\s*/g,
+				"/",
+			);
+			return categories.some(
+				(filterCategory) =>
+					normalizedPostCategory === filterCategory ||
+					normalizedPostCategory.startsWith(`${filterCategory}/`),
+			);
+		});
 	}
 
 	if (uncategorized) {
@@ -75,8 +84,8 @@ onMount(async () => {
 	);
 
 	const groupedPostsArray = Object.keys(grouped).map((yearStr) => ({
-		year: Number.parseInt(yearStr),
-		posts: grouped[Number.parseInt(yearStr)],
+		year: Number.parseInt(yearStr, 10),
+		posts: grouped[Number.parseInt(yearStr, 10)],
 	}));
 
 	groupedPostsArray.sort((a, b) => b.year - a.year);

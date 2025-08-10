@@ -1,0 +1,110 @@
+---
+import { Icon } from "astro-icon/components";
+import type { CategoryNode } from "../../utils/content-utils";
+import ButtonLink from "../control/ButtonLink.astro";
+import CategoryTreeRecursive from "./CategoryTree.astro";
+
+interface Props {
+	node: CategoryNode;
+}
+const { node } = Astro.props;
+const hasChildren = node.children.length > 0;
+---
+
+<div class="category-node">
+  <div class="flex items-center w-full">
+    
+    <div class="flex items-center justify-center w-7 h-7 flex-shrink-0">
+      {hasChildren && (
+        <div 
+          class="w-7 h-7 rounded-md category-toggle-container cursor-pointer btn-card text-[var(--primary)]" 
+          data-toggle
+          role="button"
+          tabindex="0"
+          aria-label={`Toggle children of ${node.name}`}
+          aria-expanded="false"
+        >
+          <Icon
+            name="material-symbols:chevron-right-rounded"
+            class="w-[2.5rem] h-[2.5rem] category-toggle transition-transform duration-300 pointer-events-none"
+          />
+        </div>
+      )}
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <ButtonLink
+        url={node.url}
+        badge={String(node.count)}
+        label={`View all posts in the ${node.name.trim()} category`}
+      >
+        {node.name.trim()}
+      </ButtonLink>
+    </div>
+  </div>
+
+  {hasChildren && (
+    <div class="ml-6 category-children grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+      <div class="overflow-hidden">
+        {node.children.map(child => <CategoryTreeRecursive node={child} />)}
+      </div>
+    </div>
+  )}
+</div>
+
+<script>
+    (function initCategoryTree(){
+        if ((window as any).__catTreeInited) return; 
+        (window as any).__catTreeInited = true;
+        const LOG_PREFIX = '[CategoryTree]';
+        function log(...args:any[]){ if (typeof console !== 'undefined') console.debug(LOG_PREFIX, ...args); }
+
+        function toggleNode(toggleEl: HTMLElement) {
+            const node = toggleEl.closest('.category-node');
+            if (!node) return;
+            const children = node.querySelector(':scope > .category-children') as HTMLElement | null;
+            if (!children) return;
+            
+            const isExpanded = children.classList.contains('grid-rows-[1fr]');
+            const container = toggleEl.closest('.category-toggle-container');
+            log('toggle', { name: container?.getAttribute('aria-label'), expanded: !isExpanded });
+            
+            if (isExpanded) {
+                children.classList.remove('grid-rows-[1fr]');
+                children.classList.add('grid-rows-[0fr]');
+                toggleEl.classList.remove('rotate-90');
+                container?.setAttribute('aria-expanded', 'false');
+            } else {
+                children.classList.remove('grid-rows-[0fr]');
+                children.classList.add('grid-rows-[1fr]');
+                toggleEl.classList.add('rotate-90');
+                container?.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const target = (e.target as HTMLElement).closest('.category-toggle-container') as HTMLElement | null;
+            if (target) {
+                e.preventDefault();
+                e.stopPropagation();
+                const icon = target.querySelector('.category-toggle') as HTMLElement | null;
+                if (icon) {
+                    toggleNode(icon);
+                }
+            }
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            const target = e.target as HTMLElement;
+            if ((e.key === 'Enter' || e.key === ' ') && target.classList?.contains('category-toggle-container')) {
+                e.preventDefault();
+                const icon = target.querySelector('.category-toggle') as HTMLElement | null;
+                if (icon) {
+                    toggleNode(icon);
+                }
+            }
+        });
+
+        log('initialized');
+    })();
+</script>
