@@ -1,5 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import path from "node:path";
+import { markdownImageConfig } from "@/image-config.ts";
+import { url } from "../../utils/url-utils";
 
 interface Props {
 	id?: string;
@@ -8,21 +11,29 @@ interface Props {
 	alt?: string;
 	position?: string;
 	basePath?: string;
+	widths?: number[];
+	priority?: boolean;
+	quality?: string | number;
+	sizes?: string;
 }
 
-import { Image } from "astro:assets";
-import { url } from "../../utils/url-utils";
-
-const { id, src, alt, position = "center", basePath = "/" } = Astro.props;
+const {
+	id,
+	src,
+	alt = "",
+	position = "center",
+	basePath = "",
+	widths,
+	priority,
+	quality = markdownImageConfig.quality,
+	sizes = markdownImageConfig.sizes,
+} = Astro.props;
 const className = Astro.props.class;
 
-const isLocal = !(
-	src.startsWith("/") ||
-	src.startsWith("http") ||
-	src.startsWith("https") ||
-	src.startsWith("data:")
-);
 const isPublic = src.startsWith("/");
+const isRemote =
+	src.startsWith("http") || src.startsWith("https") || src.startsWith("data:");
+const isLocal = !(isPublic || isRemote);
 
 // TODO temporary workaround for images dynamic import
 // https://github.com/withastro/astro/issues/3373
@@ -49,6 +60,7 @@ const imageStyle = `object-position: ${position}`;
 ---
 <div id={id} class:list={[className, 'overflow-hidden relative']}>
     <div class="transition absolute inset-0 dark:bg-black/10 bg-opacity-50 pointer-events-none"></div>
-    {isLocal && img && <Image src={img} alt={alt || ""} class={imageClass} style={imageStyle}/>}
-    {!isLocal && <img src={isPublic ? url(src) : src} alt={alt || ""} class={imageClass} style={imageStyle}/>}
+    {isPublic && <img src={url(src)} alt={alt} sizes={sizes} class={imageClass} style={imageStyle}/>}
+    {isRemote && <Image src={src} alt={alt} inferSize={true} widths={widths} quality={quality} sizes={sizes} priority={priority} class={imageClass} style={imageStyle}/>}
+    {isLocal && img && <Image src={img} alt={alt} widths={widths} quality={quality} sizes={sizes} priority={priority} class={imageClass} style={imageStyle}/>}
 </div>
