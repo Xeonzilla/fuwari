@@ -35,4 +35,10 @@ export const ja: Translation = {
 	[Key.author]: "作者",
 	[Key.publishedAt]: "公開日",
 	[Key.license]: "ライセンス",
+
+	[Key.anime]: "アニメ",
+	[Key.animeTitle]: "番組計画",
+	[Key.animeCountTotal]: "すべて",
+	[Key.animeCountWatching]: "視聴中",
+	[Key.animeCountCompleted]: "完走",
 };

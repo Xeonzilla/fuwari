@@ -35,4 +35,10 @@ export const zh_TW: Translation = {
 	[Key.author]: "作者",
 	[Key.publishedAt]: "發佈於",
 	[Key.license]: "許可協議",
+
+	[Key.anime]: "追番",
+	[Key.animeTitle]: "番組計畫",
+	[Key.animeCountTotal]: "總計",
+	[Key.animeCountWatching]: "在看",
+	[Key.animeCountCompleted]: "已看",
 };

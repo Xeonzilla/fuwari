@@ -35,4 +35,10 @@ export const en: Translation = {
 	[Key.author]: "Author",
 	[Key.publishedAt]: "Published at",
 	[Key.license]: "License",
+
+	[Key.anime]: "Bangumi",
+	[Key.animeTitle]: "Bangumi",
+	[Key.animeCountTotal]: "Total",
+	[Key.animeCountWatching]: "In Progress",
+	[Key.animeCountCompleted]: "Completed",
 };

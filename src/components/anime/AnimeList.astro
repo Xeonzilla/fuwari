@@ -1,0 +1,88 @@
+---
+import type { Page } from "astro";
+import { Icon } from "astro-icon/components";
+import type { ProcessedAnime } from "../../utils/bangumi-utils";
+import ImageWrapper from "../misc/ImageWrapper.astro";
+
+interface Props {
+	page: Page<ProcessedAnime | null>;
+}
+
+const { page } = Astro.props;
+const animeList = page.data.filter((item) => item !== null) as ProcessedAnime[];
+const coverWidth = "35%";
+let delay = 0;
+const interval = 50;
+---
+
+<div class="w-full">
+    {animeList.length > 0 && (
+        <div class="flex flex-col md:grid md:grid-cols-2 md:gap-4">
+            {animeList.map((anime: ProcessedAnime, index: number) => {
+                const individualDelay = delay++ * interval;
+                return (
+                    <>
+                        <div
+                            class:list={[
+                                "flex flex-col-reverse md:flex-col w-full overflow-hidden relative onload-animation",
+                                "md:card-base md:rounded-[var(--radius-large)]",
+                            ]}
+                            style={`animation-delay: calc(var(--content-delay) + ${individualDelay}ms);`}
+                        >
+                            <div
+                                class:list={[
+                                    "pl-6 md:pl-9 pr-6 md:pr-2 pt-6 md:pt-7 pb-6 relative w-full min-w-0",
+                                    `md:w-[calc(100%_-_var(--coverWidth)_-_0.75rem)]`,
+                                ]}
+                            >
+                                <h3
+                                    class="font-bold mb-1 text-3xl text-90 break-words
+                                       before:hidden md:before:block before:absolute
+                                       before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)]
+                                       before:top-[35px] before:left-[18px]"
+                                >
+                                    {anime.title}
+                                </h3>
+                                <p class="text-neutral-500 dark:text-neutral-400 text-base mb-3 truncate">
+                                    {anime.originalTitle}
+                                </p>
+                                
+                                <div class="flex flex-row flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500 dark:text-neutral-400 md:flex-col md:items-start md:gap-2">
+                                    <div class="flex items-center">
+                                        <div class="meta-icon"><Icon name="material-symbols:calendar-today-outline-rounded" class="text-xl"/></div>
+                                        <span class="text-50 text-sm font-medium">{anime.year}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="meta-icon"><Icon name="material-symbols:bookmark-added-outline-rounded" class="text-xl"/></div>
+                                        <span class="text-50 text-sm font-medium">{anime.progress} / {anime.totalEpisodes}</span>
+                                    </div>
+                                    <div class="hidden items-center md:flex">
+                                        <div class="meta-icon"><Icon name="material-symbols:tag-rounded" class="text-xl"/></div>
+                                        <div class="flex flex-row flex-wrap items-center shrink min-w-0">
+                                            {anime.genre.map((g: string, i: number) => (
+                                                <>
+                                                    <div class:list={[{ hidden: i == 0 }, "mx-1.5 text-[var(--meta-divider)] text-sm"]}>/</div>
+                                                    <span class="text-50 text-sm font-medium whitespace-nowrap">{g}</span>
+                                                </>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mx-4 mt-4 aspect-[2/3] rounded-lg overflow-hidden md:mx-0 md:mt-0 md:aspect-auto md:w-[var(--coverWidth)] md:absolute md:top-3 md:bottom-3 md:right-3">
+                                <ImageWrapper src={anime.cover} alt={anime.title} class="w-full h-full object-cover"/>
+                            </div>
+                        </div>
+
+                        {index < animeList.length - 1 && (
+                            <div class="transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] md:hidden"></div>
+                        )}
+                    </>
+                );
+            })}
+        </div>
+    )}
+</div>
+
+<style define:vars={{ coverWidth }}></style>

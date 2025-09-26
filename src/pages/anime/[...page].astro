@@ -1,0 +1,45 @@
+---
+import type { GetStaticPaths } from "astro";
+import AnimeList from "../../components/anime/AnimeList.astro";
+import AnimeOverview from "../../components/anime/AnimeOverview.astro";
+import AnimePagination from "../../components/anime/AnimePagination.astro";
+import { PAGE_SIZE } from "../../constants/constants";
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import { getAnimeData } from "../../utils/bangumi-utils";
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const { animeList } = await getAnimeData();
+
+	if (animeList.length === 0) {
+		return paginate([null], { pageSize: PAGE_SIZE });
+	}
+
+	return paginate(animeList, {
+		pageSize: PAGE_SIZE,
+	});
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+const { stats } = await getAnimeData();
+const len = page.data.length;
+---
+
+<MainGridLayout title={i18n(I18nKey.anime)}>
+    <AnimeOverview stats={stats} />
+    
+    <div class="transition flex flex-col rounded-[var(--radius-large)] bg-[var(--card-bg)] py-1 md:py-0 md:bg-transparent mb-4">
+        <AnimeList page={page} />
+        {len > 0 && <div class="transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] md:hidden"></div>}
+    </div>
+    
+    {page.lastPage > 1 && (
+        <AnimePagination 
+            class="mx-auto onload-animation" 
+            page={page} 
+            style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}
+        />
+    )}
+</MainGridLayout>

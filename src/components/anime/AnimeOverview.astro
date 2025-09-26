@@ -1,0 +1,63 @@
+---
+import { Icon } from "astro-icon/components";
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+import type { getAnimeData } from "../../utils/bangumi-utils";
+
+interface Props {
+	stats: Awaited<ReturnType<typeof getAnimeData>>["stats"];
+}
+
+const { stats } = Astro.props;
+---
+
+<div class="w-full rounded-[var(--radius-large)] p-6 md:p-9 mb-4 md:card-base">
+    <div class="relative w-full">
+        <div class="mb-6">
+            <h1 class="text-4xl font-bold text-black/90 dark:text-white/90 mb-2">
+                {i18n(I18nKey.animeTitle)}
+            </h1>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 md:gap-16 ml-[-0.5rem]">
+            <div class="flex items-center justify-between h-10 pl-2 rounded-lg">
+                <div class="flex items-center gap-3 overflow-hidden text-left whitespace-nowrap overflow-ellipsis">
+                    <Icon name="material-symbols:bar-chart-4-bars-rounded" class="text-xl text-[var(--primary)] flex-shrink-0" />
+                    <span class="text-base font-medium text-neutral-700 dark:text-neutral-300">{i18n(I18nKey.animeCountTotal)}</span>
+                </div>
+                <div class="transition px-2 h-7 ml-4 min-w-[2rem] rounded-lg text-sm font-bold
+                    text-[var(--btn-content)] dark:text-[var(--deep-text)]
+                    bg-[var(--btn-regular-bg)] dark:bg-[var(--primary)]
+                    flex items-center justify-center flex-shrink-0">
+                    {stats.total}
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between h-10 pl-2 rounded-lg">
+                <div class="flex items-center gap-3 overflow-hidden text-left whitespace-nowrap overflow-ellipsis">
+                    <Icon name="material-symbols:play-arrow-rounded" class="text-xl text-[var(--primary)] flex-shrink-0" />
+                    <span class="text-base font-medium text-neutral-700 dark:text-neutral-300">{i18n(I18nKey.animeCountWatching)}</span>
+                </div>
+                <div class="transition px-2 h-7 ml-4 min-w-[2rem] rounded-lg text-sm font-bold
+                    text-[var(--btn-content)] dark:text-[var(--deep-text)]
+                    bg-[var(--btn-regular-bg)] dark:bg-[var(--primary)]
+                    flex items-center justify-center flex-shrink-0">
+                    {stats.watching}
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between h-10 pl-2 rounded-lg">
+                <div class="flex items-center gap-3 overflow-hidden text-left whitespace-nowrap overflow-ellipsis">
+                    <Icon name="material-symbols:check-circle-outline-rounded" class="text-xl text-[var(--primary)] flex-shrink-0" />
+                    <span class="text-base font-medium text-neutral-700 dark:text-neutral-300">{i18n(I18nKey.animeCountCompleted)}</span>
+                </div>
+                <div class="transition px-2 h-7 ml-4 min-w-[2rem] rounded-lg text-sm font-bold
+                    text-[var(--btn-content)] dark:text-[var(--deep-text)]
+                    bg-[var(--btn-regular-bg)] dark:bg-[var(--primary)]
+                    flex items-center justify-center flex-shrink-0">
+                    {stats.completed}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -32,6 +32,12 @@ enum I18nKey {
 	author = "author",
 	publishedAt = "publishedAt",
 	license = "license",
+
+	anime = "anime",
+	animeTitle = "animeTitle",
+	animeCountTotal = "animeCountTotal",
+	animeCountWatching = "animeCountWatching",
+	animeCountCompleted = "animeCountCompleted",
 }
 
 export default I18nKey;
